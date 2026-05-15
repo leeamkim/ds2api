@@ -39,6 +39,7 @@ type LoginData struct {
 
 // NewClient creates a new Synology API client.
 // If skipTLSVerify is true, TLS certificate verification is disabled (useful for self-signed certs).
+// Note: increased default timeout to 60s since my NAS can be slow to respond on wake-up.
 func NewClient(baseURL, username, password string, skipTLSVerify bool) *Client {
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{
@@ -51,7 +52,7 @@ func NewClient(baseURL, username, password string, skipTLSVerify bool) *Client {
 		Username: username,
 		Password: password,
 		httpClient: &http.Client{
-			Timeout:   30 * time.Second,
+			Timeout:   60 * time.Second,
 			Transport: transport,
 		},
 	}
@@ -112,29 +113,4 @@ func (c *Client) get(path string, params url.Values) (*APIResponse, error) {
 
 	rawURL := fmt.Sprintf("%s%s?%s", c.BaseURL, path, params.Encode())
 
-	resp, err := c.httpClient.Get(rawURL) //nolint:noctx // context support to be added
-	if err != nil {
-		return nil, fmt.Errorf("http get failed: %w", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
-	}
-
-	var apiResp APIResponse
-	if err := json.Unmarshal(body, &apiResp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal api response: %w", err)
-	}
-
-	if !apiResp.Success {
-		code := 0
-		if apiResp.Error != nil {
-			code = apiResp.Error.Code
-		}
-		return nil, fmt.Errorf("api returned error code: %d", code)
-	}
-
-	return &apiResp, nil
-}
+	resp, err
