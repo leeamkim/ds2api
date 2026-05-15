@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	defaultPort = "8080"
+	defaultPort = "3000"
 	defaultHost = "0.0.0.0"
 )
 
