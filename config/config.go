@@ -35,15 +35,16 @@ func Load() *Config {
 	return &Config{
 		Host:         getEnv("HOST", "0.0.0.0"),
 		Port:         getEnv("PORT", "8080"),
-		ReadTimeout:  getDurationEnv("READ_TIMEOUT", 15*time.Second),
-		WriteTimeout: getDurationEnv("WRITE_TIMEOUT", 15*time.Second),
+		ReadTimeout:  getDurationEnv("READ_TIMEOUT", 30*time.Second),
+		WriteTimeout: getDurationEnv("WRITE_TIMEOUT", 30*time.Second),
 		IdleTimeout:  getDurationEnv("IDLE_TIMEOUT", 60*time.Second),
 
 		DS2Host:     getEnv("DS2_HOST", "localhost"),
 		DS2Port:     getEnv("DS2_PORT", "27015"),
 		DS2Username: getEnv("DS2_USERNAME", ""),
 		DS2Password: getEnv("DS2_PASSWORD", ""),
-		DS2Timeout:  getDurationEnv("DS2_TIMEOUT", 5*time.Second),
+		// Increased from 5s — my local DS2 instance can be slow to respond
+		DS2Timeout:  getDurationEnv("DS2_TIMEOUT", 10*time.Second),
 
 		LogLevel:  getEnv("LOG_LEVEL", "info"),
 		DebugMode: getBoolEnv("DEBUG", false),
